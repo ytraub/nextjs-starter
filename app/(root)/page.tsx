@@ -8,10 +8,10 @@ export default function Home() {
   const [message, setMessage] = useState("");
 
   const fetchFromServer = async () => {
-    const req = await fetch("/api/hello/BBBB");
+    const req = await fetch("/api/hello/");
     const res = await req.json();
 
-    setMessage(res.test);
+    setMessage(res.message);
   };
 
   return (

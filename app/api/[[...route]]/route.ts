@@ -1,3 +1,4 @@
+import { clerkMiddleware, getAuth } from "@hono/clerk-auth";
 import { Hono } from "hono";
 import { handle } from "hono/vercel";
 
@@ -5,19 +6,17 @@ export const runtime = "edge";
 
 const app = new Hono().basePath("/api");
 
-app
-  .get("/hello", (c) => {
-    return c.json({
-      message: "Hello World",
-    });
-  })
-  .get("/hello/:test", (c) => {
-    const test = c.req.param("test");
-    return c.json({
-      message: "Hello World",
-      test: test,
-    });
+app.get("/hello", clerkMiddleware(), (c) => {
+  const auth = getAuth(c);
+
+  if (!auth?.userId) {
+    return c.json({ error: "Unauthorized" });
+  }
+
+  return c.json({
+    message: auth.userId,
   });
+});
 
 export const GET = handle(app);
 export const POST = handle(app);
